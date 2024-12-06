@@ -10,21 +10,13 @@ pipeline {
             spec:
               containers:
               - name: docker
-                image: docker:20.10.24-dind
-                securityContext:
-                  privileged: true
-                args:
-                - dockerd
-                - --host=unix:///var/run/docker.sock
-                - --host=tcp://0.0.0.0:2375
-                env:
-                - name: DOCKER_TLS_CERTDIR
-                  value: ""
+                image: docker:20.10.24-cli
+                command:
+                - cat
+                tty: true
                 volumeMounts:
                 - name: docker-sock
                   mountPath: /var/run/docker.sock
-                - name: docker-storage
-                  mountPath: /var/lib/docker
               - name: kubectl
                 image: bitnami/kubectl:latest
                 command:
@@ -32,9 +24,8 @@ pipeline {
                 tty: true
               volumes:
               - name: docker-sock
-                emptyDir: {}
-              - name: docker-storage
-                emptyDir: {}
+                hostPath:
+                  path: /var/run/docker.sock
             """
         }
     }
