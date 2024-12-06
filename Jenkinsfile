@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script {
                     // Login to Docker Hub and push the image
-                    withDockerRegistry([credentialsId: docker-hub-credentials]) {
+                    withDockerRegistry([credentialsId: DOCKER_HUB_CREDS]) {
                         sh '''
                             docker push $DOCKER_IMAGE
                         '''
@@ -45,11 +45,10 @@ pipeline {
             steps {
                 script {
                     // Deploy to Kubernetes using kubectl
-                    withKubeConfig([contextName: KUBE_CONTEXT]) {
-                        sh '''
-                            kubectl apply -f k8s/deployment.yaml -n $KUBERNETES_NAMESPACE
-                        '''
-                    }
+                    sh '''
+                        kubectl apply -f k8s/deployment.yaml -n $KUBERNETES_NAMESPACE
+                    '''
+                    }    
                 }
             }
         }
