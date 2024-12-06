@@ -17,6 +17,8 @@ pipeline {
             }
         }
 
+        
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -36,6 +38,19 @@ pipeline {
                         // Push the Docker image to Docker Hub
                         sh '''
                             docker push $DOCKER_IMAGE
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Test Docker Login') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        echo "DOCKER_USER: $DOCKER_USER"  // Debugging step
+                        sh '''
+                            docker login -u $DOCKER_USER -p $DOCKER_PASS
                         '''
                     }
                 }
