@@ -9,15 +9,15 @@ pipeline {
                 app: jenkins-agent
             spec:
               containers:
-              - name: docker-k8s
+              - name: docker
                 image: docker:20.10.24-dind
-                args: ["--privileged"]
-                command:
-                - cat
-                tty: true
+                securityContext:
+                  privileged: true
                 volumeMounts:
                 - name: docker-sock
                   mountPath: /var/run/docker.sock
+                - name: docker-storage
+                  mountPath: /var/lib/docker
               - name: kubectl
                 image: bitnami/kubectl:latest
                 command:
@@ -27,24 +27,13 @@ pipeline {
               - name: docker-sock
                 hostPath:
                   path: /var/run/docker.sock
+              - name: docker-storage
+                emptyDir: {}
             """
         }
     }
-    
+
     stages {
-        stage('Checkout') {
-            steps {
-                echo 'Checking out code...'
-                checkout scm
-            }
-        }
-        
-        stage('Say Hello') {
-            steps {
-                echo 'Hello, World!'
-            }
-        }
-        
         stage('Docker Info') {
             steps {
                 echo 'Checking Docker info...'
