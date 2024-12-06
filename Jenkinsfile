@@ -8,6 +8,12 @@ pipeline {
                 checkout scm
             }
         }
+        
+        stage('Say Hello') {
+            steps {
+                echo 'Hello, World!'
+            }
+        }
     }
 
     post {
