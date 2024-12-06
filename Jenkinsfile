@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Define your Docker Hub credentials and image name here
-        DOCKER_HUB_CREDS = credentials('docker-hub-credentials') // Docker Hub credentials
+        DOCKERHUB_CREDENTIALS= credentials('dockerhubcredentials')    // Docker Hub credentials
         DOCKER_IMAGE = 'redheaven/hello-world:latest' // Image name
         KUBE_CONTEXT = 'your-kube-context'  // Kube context if you have multiple clusters
         KUBERNETES_NAMESPACE = 'default'  // Replace with your namespace
@@ -30,6 +30,15 @@ pipeline {
             }
         }
 
+       
+
+        stage('Login to Docker Hub') {      	
+            steps{                       	
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'                		
+                echo 'Login Completed'      
+            }           
+        } 
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -43,20 +52,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Test Docker Login') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        echo "DOCKER_USER: $DOCKER_USER"  // Debugging step
-                        sh '''
-                            docker login -u $DOCKER_USER -p $DOCKER_PASS
-                        '''
-                    }
-                }
-            }
-        }
-
 
         stage('Deploy to Kubernetes') {
             steps {
