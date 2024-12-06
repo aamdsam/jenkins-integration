@@ -36,19 +36,6 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    // Push the Docker image to Docker Hub
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                        sh '''
-                            docker push $DOCKER_IMAGE
-                        '''
-                    }
-                }
-            }
-        }
-
         stage('Deploy to Kubernetes') {
             steps {
                 script {
