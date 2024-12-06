@@ -35,19 +35,24 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 script {
-                    // Use sudo with -S to allow password input through stdin
-                    sh '''echo $DOCKERHUB_CREDENTIALS_PSW | sudo -S docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'''
+                    // Login to Docker Hub without sudo
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
+                        sh '''
+                            docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
+                        '''
+                    }
                     echo 'Login Completed'
                 }
             }
         }
 
 
+
         stage('Push Docker Image') {
             steps {
                 script {
                     // Login to Docker Hub and push the image using docker.withRegistry
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_HUB_CREDS) {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
                         // Push the Docker image to Docker Hub
                         sh '''
                             docker push $DOCKER_IMAGE
