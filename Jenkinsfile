@@ -8,7 +8,7 @@ pipeline {
                 checkout scm
             }
         }
-
+    }
 
     post {
         success {
