@@ -37,7 +37,9 @@ spec:
 
   volumes:
   - name: docker-sock
-    emptyDir: {}
+    hostPath:
+      path: /var/run/docker.sock  # Ensures it's treated as a socket file
+      type: Socket
   - name: docker-storage
     emptyDir: {}
 """
