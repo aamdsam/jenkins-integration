@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         // Define your Docker Hub credentials and image name here
-        DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
-        DOCKER_IMAGE = 'redheaven/hello-world:latest'
+        DOCKER_HUB_CREDS = credentials('docker-hub-credentials') // Docker Hub credentials
+        DOCKER_IMAGE = 'redheaven/hello-world:latest' // Image name
         KUBE_CONTEXT = 'your-kube-context'  // Kube context if you have multiple clusters
         KUBERNETES_NAMESPACE = 'default'  // Replace with your namespace
     }
@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script {
                     // Login to Docker Hub and push the image
-                    withDockerRegistry([credentialsId: DOCKER_HUB_CREDS]) {
+                    withDockerRegistry([credentialsId: DOCKER_HUB_CREDS, url: 'https://index.docker.io/v1/']) {
                         sh '''
                             docker push $DOCKER_IMAGE
                         '''
@@ -45,8 +45,6 @@ pipeline {
             steps {
                 script {
                     // Deploy to Kubernetes using kubectl
-                     
-                    // Build Docker image
                     sh '''
                         kubectl apply -f k8s/deployment.yaml -n $KUBERNETES_NAMESPACE
                     '''
