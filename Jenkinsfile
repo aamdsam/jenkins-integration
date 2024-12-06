@@ -45,10 +45,11 @@ pipeline {
             steps {
                 script {
                     // Deploy to Kubernetes using kubectl
+                     
+                    // Build Docker image
                     sh '''
                         kubectl apply -f k8s/deployment.yaml -n $KUBERNETES_NAMESPACE
                     '''
-                    }    
                 }
             }
         }
