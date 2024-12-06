@@ -31,8 +31,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Login to Docker Hub and push the image
-                    withDockerRegistry([credentialsId: DOCKER_HUB_CREDS, url: 'https://index.docker.io/v1/']) {
+                    // Login to Docker Hub and push the image using docker.withRegistry
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_HUB_CREDS) {
+                        // Push the Docker image to Docker Hub
                         sh '''
                             docker push $DOCKER_IMAGE
                         '''
@@ -40,6 +41,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Deploy to Kubernetes') {
             steps {
