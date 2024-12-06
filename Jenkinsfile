@@ -13,6 +13,13 @@ pipeline {
                 image: docker:20.10.24-dind
                 securityContext:
                   privileged: true
+                args:
+                - dockerd
+                - --host=unix:///var/run/docker.sock
+                - --host=tcp://0.0.0.0:2375
+                env:
+                - name: DOCKER_TLS_CERTDIR
+                  value: ""
                 volumeMounts:
                 - name: docker-sock
                   mountPath: /var/run/docker.sock
@@ -25,8 +32,7 @@ pipeline {
                 tty: true
               volumes:
               - name: docker-sock
-                hostPath:
-                  path: /var/run/docker.sock
+                emptyDir: {}
               - name: docker-storage
                 emptyDir: {}
             """
@@ -43,7 +49,7 @@ pipeline {
         
         stage('Kubernetes Info') {
             steps {
-                echo 'Checking Kubernetes info...'
+                echo 'Checking Kubernetes version...'
                 sh 'kubectl version --client'
             }
         }
