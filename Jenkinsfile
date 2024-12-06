@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     // Build the application using Maven
-                    sh 'mvn clean package -DskipTests'
+                    sh 'docker info'
                 }
             }
         }
