@@ -1,9 +1,9 @@
 pipeline {
-    agent none // Specify none because we'll use the docker block explicitly
+    agent none
     stages {
         stage('Build') {
             agent {
-                docker {
+                dockerContainer {
                     image 'maven:3.9.3-eclipse-temurin-17'
                     args '-v $HOME/.m2:/root/.m2'
                 }
