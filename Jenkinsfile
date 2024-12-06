@@ -1,26 +1,14 @@
 pipeline {
-    agent any  // Specify the built-in agent
-
+    agent {
+        docker {
+            image 'maven:3.9.3-eclipse-temurin-17'
+            args '-v $HOME/.m2:/root/.m2'
+        }
+    }
     stages {
-        stage('Check Docker and kubectl Installation') {
+        stage('Build') {
             steps {
-                script {
-                    // Check Docker version
-                    try {
-                        sh 'docker --version'
-                        echo 'Docker is installed.'
-                    } catch (Exception e) {
-                        error 'Docker is not installed.'
-                    }
-
-                    // Check kubectl version
-                    try {
-                        sh 'kubectl version --client'
-                        echo 'kubectl is installed.'
-                    } catch (Exception e) {
-                        error 'kubectl is not installed.'
-                    }
-                }
+                sh 'mvn -B'
             }
         }
     }
