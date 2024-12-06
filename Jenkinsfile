@@ -9,9 +9,11 @@ pipeline {
             }
         }
         
-        stage('Say Hello') {
+        
+        stage('Docker Info') {
             steps {
-                echo 'Hello, World!'
+                echo 'Checking Docker info...'
+                sh 'docker info'
             }
         }
     }
