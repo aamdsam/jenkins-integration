@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: helloworld-container
-        image: your-docker-image-name:tag
+        image: redheaven/hello-world:latest
         ports:
         - containerPort: 8081
         envFrom:
@@ -42,3 +42,12 @@ spec:
       port: 80
       targetPort: 8081
   type: ClusterIP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-properties
+data:
+  application.properties: |
+    server.port=8081
