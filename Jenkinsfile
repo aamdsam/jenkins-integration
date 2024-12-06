@@ -13,7 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout your repository
-                git 'https://github.com/your-repo/hello-world.git'
+                git 'https://github.com/irfanrp/jenkins-integration.git'
             }
         }
 
