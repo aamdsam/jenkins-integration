@@ -1,40 +1,73 @@
 pipeline {
-    agent none // Tidak ada agen default; tiap stage akan menentukan agen
+    agent any
+
+    environment {
+        // Define your Docker Hub credentials and image name here
+        DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
+        DOCKER_IMAGE = 'redheaven/hello-world:latest'
+        KUBE_CONTEXT = 'your-kube-context'  // Kube context if you have multiple clusters
+        KUBERNETES_NAMESPACE = 'default'  // Replace with your namespace
+    }
+
     stages {
-        stage('Prepare Docker') {
-            agent {
-                docker {
-                    image 'docker:24.0.2-dind' // Docker in Docker image
-                    args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
+        stage('Checkout') {
             steps {
-                sh 'docker --version' // Verifikasi Docker tersedia
+                // Checkout your repository
+                git 'https://github.com/your-repo/hello-world.git'
             }
         }
 
-        stage('Build Image') {
-            agent {
-                docker {
-                    image 'docker:24.0.2-dind'
-                    args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
+        stage('Build') {
             steps {
-                sh 'docker build -t my-app:latest .' // Build image menggunakan Docker
+                script {
+                    // Build the application using Maven
+                    sh 'mvn clean package -DskipTests'
+                }
             }
         }
 
-        stage('Test Kubernetes CLI') {
-            agent {
-                docker {
-                    image 'bitnami/kubectl:latest'
-                    args '-v /root/.kube:/root/.kube'
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build Docker image
+                    sh '''
+                        docker build -t $DOCKER_IMAGE .
+                    '''
                 }
             }
+        }
+
+        stage('Push Docker Image') {
             steps {
-                sh 'kubectl version --client' // Verifikasi kubectl tersedia
+                script {
+                    // Login to Docker Hub and push the image
+                    withDockerRegistry([credentialsId: DOCKER_HUB_CREDS]) {
+                        sh '''
+                            docker push $DOCKER_IMAGE
+                        '''
+                    }
+                }
             }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    // Deploy to Kubernetes using kubectl
+                    withKubeConfig([contextName: KUBE_CONTEXT]) {
+                        sh '''
+                            kubectl apply -f k8s/deployment.yaml -n $KUBERNETES_NAMESPACE
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up if necessary, for example, remove the Docker image locally
+            sh 'docker rmi $DOCKER_IMAGE'
         }
     }
 }

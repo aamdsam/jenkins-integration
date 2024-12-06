@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld-app
+  labels:
+    app: helloworld
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: helloworld
+  template:
+    metadata:
+      labels:
+        app: helloworld
+    spec:
+      containers:
+      - name: helloworld-container
+        image: your-docker-image-name:tag
+        ports:
+        - containerPort: 8081
+        envFrom:
+        - configMapRef:
+            name: application-properties
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/resources
+      volumes:
+      - name: config-volume
+        configMap:
+          name: application-properties
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworld-service
+spec:
+  selector:
+    app: helloworld
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8081
+  type: ClusterIP
