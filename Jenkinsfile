@@ -17,15 +17,6 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
-                script {
-                    // Build the application using Maven
-                    sh 'docker info'
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -41,7 +32,7 @@ pipeline {
             steps {
                 script {
                     // Login to Docker Hub and push the image
-                    withDockerRegistry([credentialsId: DOCKER_HUB_CREDS]) {
+                    withDockerRegistry([credentialsId: docker-hub-credentials]) {
                         sh '''
                             docker push $DOCKER_IMAGE
                         '''
