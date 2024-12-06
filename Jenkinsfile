@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'built-in' }  // Specify the built-in agent
 
     stages {
         stage('Check Docker and kubectl Installation') {
