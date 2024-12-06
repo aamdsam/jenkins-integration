@@ -1,15 +1,25 @@
 pipeline {
-    agent none
+    agent {
+        kubernetes {
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            spec:
+              containers:
+              - name: maven
+                image: maven:3.9.3-eclipse-temurin-17
+                command:
+                - cat
+                tty: true
+            """
+        }
+    }
     stages {
         stage('Build') {
-            agent {
-                docker {
-                    image 'maven:3.9.3-eclipse-temurin-17'
-                    args '-v $HOME/.m2:/root/.m2'
-                }
-            }
             steps {
-                sh 'mvn -B clean install'
+                container('maven') {
+                    sh 'mvn -B clean install'
+                }
             }
         }
     }
