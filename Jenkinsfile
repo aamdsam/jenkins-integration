@@ -36,7 +36,20 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+
+        stage('delete manifest in Kubernetes') {
+            steps {
+                script {
+                    // Deploy to Kubernetes using kubectl
+                    sh '''
+                        kubectl delete -f k8s/deployment.yaml -n $KUBERNETES_NAMESPACE
+                        sleep 60
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy again to Kubernetes') {
             steps {
                 script {
                     // Deploy to Kubernetes using kubectl
