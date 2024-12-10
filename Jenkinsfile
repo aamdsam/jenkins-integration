@@ -37,17 +37,17 @@ pipeline {
         }
 
 
-        stage('delete manifest in Kubernetes') {
-            steps {
-                script {
-                    // Deploy to Kubernetes using kubectl
-                    sh '''
-                        kubectl delete -f k8s/deployment.yaml -n $KUBERNETES_NAMESPACE
-                        sleep 60
-                    '''
-                }
-            }
-        }
+        // stage('delete manifest in Kubernetes') {
+        //     steps {
+        //         script {
+        //             // Deploy to Kubernetes using kubectl
+        //             sh '''
+        //                 kubectl delete -f k8s/deployment.yaml -n $KUBERNETES_NAMESPACE
+        //                 sleep 60
+        //             '''
+        //         }
+        //     }
+        // }
 
         stage('Deploy again to Kubernetes') {
             steps {
@@ -59,6 +59,18 @@ pipeline {
                 }
             }
         }
+
+        stage('rollout restart  Kubernetes') {
+            steps {
+                script {
+                    // Deploy to Kubernetes using kubectl
+                    sh '''
+                        kubectl rollout restart deployment/helloworld-app -n $KUBERNETES_NAMESPACE
+                    '''
+                }
+            }
+        }
+
     }
 
     post {
