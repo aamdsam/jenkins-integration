@@ -1,2 +1,2 @@
 # jenkins-integration
-#
+# automate triger
