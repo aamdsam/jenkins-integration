@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         // Define your Docker Hub credentials and image name here
-        DOCKER_IMAGE = 'redheaven/hello-world:latest' // Image name
+        DOCKER_IMAGE = 'aamdsam/hello-world:latest' // Image name
         KUBE_CONTEXT = 'your-kube-context'  // Kube context if you have multiple clusters
         KUBERNETES_NAMESPACE = 'default'  // Replace with your namespace
     }
@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout your repository
-                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git', url: 'git@github.com:irfanrp/jenkins-integration.git']])
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git', url: 'git@github.com:aamdsam/jenkins-integration.git']])
             }
         }
         stage('Build Docker Image') {
