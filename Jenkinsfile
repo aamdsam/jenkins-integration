@@ -8,7 +8,6 @@ pipeline {
     }
     stages {
         stage('Checkout') {
-            stage('Checkout') {
             steps {
                 git branch: 'master', url: 'https://github.com/aamdsam/jenkins-integration.git'
             }
