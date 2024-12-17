@@ -24,24 +24,11 @@ pipeline {
         }
         stage('Docker Push') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub_aam', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-                    script {
-                        sh '''
-                            # Login ke Docker Hub
-                            echo $dockerHubPassword | docker login -u $dockerHubUser --password-stdin
-
-                            # Periksa apakah login berhasil
-                            if [ $? -eq 0 ]; then
-                                echo "Sukses login ke Docker Hub sebagai $dockerHubUser"
-                            else
-                                echo "Gagal login ke Docker Hub"
-                                exit 1
-                            fi
-
-                            # Push image ke Docker Hub
-                            docker push $DOCKER_IMAGE
-                        '''
-                    }
+                script {
+                    // Push Docker image to Docker Hub public repository
+                    sh '''
+                        docker push $DOCKER_IMAGE
+                    '''
                 }
             }
         }
