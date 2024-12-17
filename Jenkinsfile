@@ -13,7 +13,6 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/aamdsam/jenkins-integration.git'
             }
         }
-        }
         stage('Build Docker Image') {
             steps {
                 script {
