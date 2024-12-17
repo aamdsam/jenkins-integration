@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout your repository
-                git 'https://github.com/irfanrp/jenkins-integration.git'
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git', url: 'git@github.com:irfanrp/jenkins-integration.git']])
             }
         }
         stage('Build Docker Image') {
