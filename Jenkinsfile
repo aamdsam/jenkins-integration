@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         // Define your Docker Hub credentials and image name here
-        DOCKER_IMAGE = 'aamdsam/hello-world:latest' // Image name
+        DOCKER_IMAGE = 'aamdsam/jenkins-integration:latest' // Image name
         KUBE_CONTEXT = 'your-kube-context'  // Kube context if you have multiple clusters
         KUBERNETES_NAMESPACE = 'default'  // Replace with your namespace
     }
@@ -24,11 +24,9 @@ pipeline {
         }
         stage('Docker Push') {
             steps {
-                script {
-                    // Push Docker image to Docker Hub public repository
-                    sh '''
-                        docker push $DOCKER_IMAGE
-                    '''
+                withCredentials([usernamePassword(credentialsId: 'dockerhub_aam', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                sh 'docker push $DOCKER_IMAGE'
                 }
             }
         }
