@@ -24,11 +24,9 @@ pipeline {
         }
         stage('Docker Push') {
             steps {
-                script {
-                    // Push Docker image to Docker Hub public repository
-                    sh '''
-                        docker push $DOCKER_IMAGE
-                    '''
+                withCredentials([usernamePassword(credentialsId: 'dockerhubcredentials', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                sh 'docker push $DOCKER_IMAGE'
                 }
             }
         }
