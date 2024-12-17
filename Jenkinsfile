@@ -8,10 +8,11 @@ pipeline {
     }
     stages {
         stage('Checkout') {
+            stage('Checkout') {
             steps {
-                // Checkout your repository
-                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'git_aam', url: 'git@github.com:aamdsam/jenkins-integration.git']])
+                git branch: 'master', url: 'https://github.com/aamdsam/jenkins-integration.git'
             }
+        }
         }
         stage('Build Docker Image') {
             steps {
@@ -25,9 +26,11 @@ pipeline {
         }
         stage('Docker Push') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub_aam', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                sh 'docker push $DOCKER_IMAGE'
+                script {
+                    // Push Docker image to Docker Hub public repository
+                    sh '''
+                        docker push $DOCKER_IMAGE
+                    '''
                 }
             }
         }
