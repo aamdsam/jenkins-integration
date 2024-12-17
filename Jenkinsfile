@@ -25,9 +25,13 @@ pipeline {
         stage('Docker Push') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub_aam', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                sh 'docker push $DOCKER_IMAGE'
-                }
+            script {
+                sh '''
+                    echo $dockerHubPassword | docker login -u $dockerHubUser --password-stdin
+                    docker push $DOCKER_IMAGE
+                '''
+            }
+        }
             }
         }
         // stage('delete manifest in Kubernetes') {
